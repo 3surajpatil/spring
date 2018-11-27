@@ -1,0 +1,529 @@
+Constructor Injection with Collection 
+-------------------------------------
+
+We can inject collection values by constructor in spring framework. There can be used three elements inside the 
+constructor-arg element.
+
+It can be: 
+1)list
+2)set
+3)map
+
+1) list (set would be same as list but not having duplicate emelents.)
+<bean id="q" class="com.javatpoint.Question">  
+	<constructor-arg>  
+		<list>  
+			<value>Java is a programming language</value>  
+			<value>Java is a Platform</value>  
+			<value>Java is an Island of Indonasia</value>  
+		</list>  
+	</constructor-arg>  
+</bean>
+
+or we can also pass reference of bean as below.
+
+	<constructor-arg>  
+		<list>  
+			<ref bean="ans1"/>  
+			<ref bean="ans2"/>  
+		</list>  
+	</constructor-arg>
+	
+2) Map	
+
+<bean id="q" class="com.javatpoint.Question">  
+	<constructor-arg value="11"></constructor-arg>  
+	<constructor-arg value="What is Java?"></constructor-arg>  
+	<constructor-arg>  
+		<map>  
+			<entry key="Java is a Programming Language"  value="Ajay Kumar"></entry>  
+			<entry key="Java is a Platform" value="John Smith"></entry>  
+			<entry key="Java is an Island" value="Raj Kumar"></entry>  
+		</map>  
+	</constructor-arg>  
+</bean>
+
+in below example map's entry key is a reference object ans value is also a reference object.
+
+<bean id="q" class="com.javatpoint.Question">  
+	<constructor-arg value="1"></constructor-arg>  
+	<constructor-arg value="What is Java?"></constructor-arg>  
+	<constructor-arg>  
+		<map>  
+			<entry key-ref="answer1" value-ref="user1"></entry>  
+			<entry key-ref="answer2" value-ref="user2"></entry>  
+		</map>  
+	</constructor-arg>  
+<bean>
+
+
+Setter Injection with Dependent Object & string values.
+-----------------------------------------------
+
+
+<bean id="address1" class="com.javatpoint.Address">  
+	<property name="addressLine1" value="51,Lohianagar"></property>  
+	<property name="city" value="Ghaziabad"></property>  
+	<property name="state" value="UP"></property>  
+	<property name="country" value="India"></property>  
+</bean>  
+  
+<bean id="obj" class="com.javatpoint.Employee">  
+	<property name="id" value="1"></property>  
+	<property name="name" value="Sachin Yadav"></property>  
+	<property name="address" ref="address1"></property>  
+</bean>  
+
+
+
+Setter Injection with Collection
+--------------------------------
+
+We can inject collection values by setter method in spring framework. 
+There can be used three elements inside the property element.
+
+1)list
+2)set
+3)map
+
+
+1) list 
+-----------
+<property name="answers">  
+	<list>  
+	<value>Java is a programming language</value>  
+	<value>Java is a platform</value>  
+	<value>Java is an Island</value>  
+	</list>  
+</property>  
+
+<property name="answers">  
+	<list>  
+		<ref bean="answer1"/>  
+		<ref bean="answer2"/>  
+	</list>  
+</property>  
+
+
+2) map
+----------
+
+<property name="answers">  
+	<map>  
+		<entry key="Java is a programming language"  value="Sonoo Jaiswal"></entry>  
+		<entry key="Java is a Platform" value="Sachin Yadav"></entry>  
+	</map>  
+</property>
+
+
+<bean id="q" class="com.javatpoint.Question">  
+	<property name="id" value="1"></property>  
+	<property name="name" value="What is Java?"></property>  
+	<property name="answers">  
+		<map>  
+			<entry key-ref="answer1" value-ref="user1"></entry>  
+			<entry key-ref="answer2" value-ref="user2"></entry>  
+		</map>  
+	</property>  
+</bean>  
+
+
+Autowiring 
+==========
+Autowiring feature of spring framework enables you to inject the object dependency implicitly. 
+It internally uses setter or constructor injection.
+Autowiring can't be used to inject primitive and string values. It works with reference only.
+
+below are types of autowiring
+
+1) no     		:- It is the default autowiring mode. It means no autowiring bydefault. 
+					
+
+2) byName 		:- The byName mode injects the object dependency according to name of the bean.
+In such case, property name and bean name must be same. It internally calls setter method. 
+<bean id="a" class="org.sssit.A" autowire="byName"></bean>  
+					
+3) byType 		:- The byType mode injects the object dependency according to type. 
+So property name and bean name can be different. It internally calls setter method. 
+				
+(Class A is having object of class B)
+<bean id="b1" class="org.sssit.B"></bean>  
+<bean id="a" class="org.sssit.A" autowire="byType"></bean>  
+
+In this case, it works fine because you have created an instance of B type. It doesn't matter that you have different bean name than reference name.
+But, if you have multiple bean of one type, it will not work and throw exception.
+
+					
+					
+4) constructor  :- The constructor mode injects the dependency by calling the constructor of the class. 
+It calls the constructor having large number of parameters. 
+If you have 3 constructors in a class, zero-arg, one-arg and two-arg then injection will be performed 
+by calling the two-arg constructor.					
+
+					
+<bean id="b" class="org.sssit.B"></bean>  
+<bean id="a" class="org.sssit.A" autowire="constructor"></bean> 
+
+
+
+============================SPRING JDBC===============================
+
+
+Problems of JDBC API
+
+The problems of JDBC API are as follows:
+◦We need to write a lot of code before and after executing the query, such as creating connection, statement, 
+ closing resultset, connection etc.
+◦We need to perform exception handling code on the database logic.
+◦We need to handle transaction.
+◦Repetition of all these codes from one to another database logic is a time consuming task.
+
+Advantage of Spring JdbcTemplate
+
+Spring JdbcTemplate eliminates all the above mentioned problems of JDBC API. It provides you methods to write
+the queries directly, so it saves a lot of work and time.
+
+
+
+Spring framework provides following approaches for JDBC database access:
+1)JdbcTemplate
+2)NamedParameterJdbcTemplate
+3)SimpleJdbcTemplate
+4)SimpleJdbcInsert and SimpleJdbcCall
+
+
+1) JdbcTemplate Class
+=======================
+
+It is the central class in the Spring JDBC support classes. It takes care of creation and release of resources such as
+creating and closing of connection object etc. So it will not lead to any problem if you forget to close the connection.
+
+It handles the exception and provides the informative exception messages by the help of excepion classes defined in the
+org.springframework.dao package.
+
+We can perform all the database operations by the help of JdbcTemplate class such as 
+insertion, updation, deletion and retrieval of the data from the database. 
+
+
+below are the methods of JdbcTemplate class
+
+1) public int update(String query) 					   :-  is used to insert, update and delete records. 
+2) public int update(String query,Object... args)      :-  is used to insert, update and delete records using PreparedStatement 
+													       using given arguments. 
+3) public void execute(String query) 				   :-  is used to execute DDL query. 
+4) public  T execute(String sql, PreparedStatementCallback action)
+													   :-  executes the query by using PreparedStatement callback. 
+5) public  T query(String sql, ResultSetExtractor rse) :-  is used to fetch records using ResultSetExtractor. 
+6) public  List query(String sql, RowMapper rse) 	   :-  is used to fetch records using RowMapper. 
+
+
+
+example -------------------
+
+public class EmployeeDao {  
+
+private JdbcTemplate jdbcTemplate;  
+  
+public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {  
+    this.jdbcTemplate = jdbcTemplate;  
+}  
+
+public int insertUpdateDelete(Employee e){  
+    String query="insert into employee values('"+e.getId()+"','"+e.getName()+"','"+e.getSalary()+"')";  
+	String query="update employee set name='"+e.getName()+"',salary='"+e.getSalary()+"' where id='"+e.getId()+"' ";  
+	String query="delete from employee where id='"+e.getId()+"' ";  
+		
+    return jdbcTemplate.update(query);  
+}  
+
+using prepared statement 
+
+public Boolean saveEmployeeByPreparedStatement(final Employee e){  
+    String query="insert into employee values(?,?,?)";  
+
+    return jdbcTemplate.execute(query,new PreparedStatementCallback<Boolean>(){  
+    @Override  
+    public Boolean doInPreparedStatement(PreparedStatement ps)  throws SQLException, DataAccessException {                
+        ps.setInt(1,e.getId());  
+        ps.setString(2,e.getName());  
+        ps.setFloat(3,e.getSalary());                
+        return ps.execute();                
+    }  
+								});  
+}//saveEmployeeByPreparedStatement
+
+public List<Employee> getAllEmployees(){  
+ return template.query("select * from employee",new ResultSetExtractor<List<Employee>>(){  
+    @Override  
+     public List<Employee> extractData(ResultSet rs) throws SQLException,  
+            DataAccessException {  
+      
+        List<Employee> list=new ArrayList<Employee>();  
+        while(rs.next()){  
+        Employee e=new Employee();  
+        e.setId(rs.getInt(1));  
+        e.setName(rs.getString(2));  
+        e.setSalary(rs.getInt(3));  
+        list.add(e);  
+        }  
+        return list;  
+        }  
+    });  
+ }//getAllEmployees  
+
+
+ /*
+ RowMapper interface allows to map a row of the relations with the instance of user-defined class. 
+ It iterates the ResultSet internally and adds it into the collection. 
+ So we don't need to write a lot of code to fetch the records as ResultSetExtractor.
+ */
+
+  public List<Employee> getAllEmployeesRowMapper(){  
+	return template.query("select * from employee",new RowMapper<Employee>(){  
+    @Override  
+    public Employee mapRow(ResultSet rs, int rownumber) throws SQLException {  
+        Employee e=new Employee();  
+        e.setId(rs.getInt(1));  
+        e.setName(rs.getString(2));  
+        e.setSalary(rs.getInt(3));  
+        return e;  
+    }  
+    });  
+}  
+
+  
+  
+  
+}//Employee class
+
+configurations in spring.xml 
+
+<beans...>
+	<bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />  
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />  
+		<property name="username" value="system" />  
+		<property name="password" value="oracle" />  
+	</bean>  
+	  
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">  
+		<property name="dataSource" ref="ds"></property>  
+	</bean>  
+	 
+	<bean id="edao" class="com.javatpoint.EmployeeDao">  
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>  
+	</bean>  
+	  
+</beans>  
+
+
+
+NamedParameterJdbcTemplate template :- with this template class we can use the named parameters in prepared statement.
+method to be executed is execute(string,map<string,object>,new PreparedStatementCallback(){...})
+with this implementations we can pass parameters by name insted of using questionmarks.
+
+public class EmpDao {  
+NamedParameterJdbcTemplate template;  
+  
+public EmpDao(NamedParameterJdbcTemplate template) {  
+        this.template = template;  
+}  
+public  void save (Emp e){  
+String query="insert into employee values (:id,:name,:salary)";  
+  
+Map<String,Object> map=new HashMap<String,Object>();  
+map.put("id",e.getId());  
+map.put("name",e.getName());  
+map.put("salary",e.getSalary());  
+  
+template.execute(query,map,new PreparedStatementCallback() {  
+    @Override  
+    public Object doInPreparedStatement(PreparedStatement ps)  
+            throws SQLException, DataAccessException {  
+        return ps.executeUpdate();  
+    }  
+});  
+}  
+}  
+
+
+-->  we can also use datasource for getting connection and executing our queries like below example.
+
+		
+			<bean id="dataSource"
+				class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		  
+				<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+				<property name="url" value="jdbc:mysql://localhost:3306/java2novice" />
+				<property name="username" value="user_name" />
+				<property name="password" value="password" />
+			</bean>
+			 
+			<bean id="employeeDAO" class="com.java2novice.dao.EmployeeDaoImpl">
+				<property name="dataSource" ref="dataSource" />
+			</bean>
+		
+
+
+class Test{
+
+		private DataSource dataSource;
+      
+			public void setDataSource(DataSource dataSource) {
+			this.dataSource = dataSource;
+		}
+
+			public void saveEmp(){	
+
+			conn = dataSource.getConnection();
+            prepStmt = conn.prepareStatement(query);
+            prepStmt.setInt(1, empId);
+            rsltSet = prepStmt.executeQuery();
+			...
+}
+
+
+---> using SimpleJdbcTemplate
+Spring 3 JDBC supports the java 5 feature var-args (variable argument) and autoboxing by the help of SimpleJdbcTemplate class. 
+SimpleJdbcTemplate class wraps the JdbcTemplate class and provides the update method where we can pass arbitrary number of arguments
+
+int update(String sql,Object... parameters)  
+
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;  
+public class EmpDao {  
+SimpleJdbcTemplate template;  
+  
+public EmpDao(SimpleJdbcTemplate template) {  
+        this.template = template;  
+}  
+public int update (Emp e){  
+String query="update employee set name=? where id=?";  
+return template.update(query,e.getName(),e.getId());  
+  
+//String query="update employee set name=?,salary=? where id=?";  
+//return template.update(query,e.getName(),e.getSalary(),e.getId());  
+}  
+  
+}  
+
+
+
+=========Hibernate and Spring Integration==========
+
+We can simply integrate hibernate application with spring application.
+
+In hibernate framework, we provide all the database information hibernate.cfg.xml file.
+
+But if we are going to integrate the hibernate application with spring, we don't need to create the hibernate.cfg.xml file. 
+We can provide all the information in the applicationContext.xml file.
+
+The Spring framework provides HibernateTemplate class, so you don't need to follow so many steps like 
+create Configuration, BuildSessionFactory, Session, beginning and committing transaction etc.
+
+comman methods of HibrnateTemplate Class.
+
+1) void persist(Object entity)  persists the given object. 
+2) Serializable save(Object entity)  persists the given object and returns id. 
+3) void saveOrUpdate(Object entity)  persists or updates the given object. If id is found, it updates the record otherwise saves the record. 
+4) void update(Object entity)  updates the given object. 
+5) void delete(Object entity)  deletes the given object on the basis of id. 
+6) Object get(Class entityClass, Serializable id)  returns the persistent object on the basis of given id.  
+7) Object load(Class entityClass, Serializable id)  returns the persistent object on the basis of given id.  
+8) List loadAll(Class entityClass)  returns the all the persistent objects.  
+
+
+
+Steps:- 
+
+Let's see what are the simple steps for hibernate and spring integration:
+1.create table in the database It is optional.
+2.create applicationContext.xml file It contains information of DataSource, SessionFactory etc.
+3.create Employee.java file It is the persistent class
+4.create employee.hbm.xml file It is the mapping file.
+5.create EmployeeDao.java file It is the dao class that uses HibernateTemplate.
+6.create InsertTest.java file It calls methods of EmployeeDao class.
+
+
+
+
+EmployeeDao.java
+--------------------
+
+package com.javatpoint;  
+import org.springframework.orm.hibernate3.HibernateTemplate;  
+import java.util.*;  
+public class EmployeeDao {  
+HibernateTemplate template;  
+public void setTemplate(HibernateTemplate template) {  
+    this.template = template;  
+}  
+//method to save employee  
+public void saveEmployee(Employee e){  
+    template.save(e);  
+}  
+//method to update employee  
+public void updateEmployee(Employee e){  
+    template.update(e);  
+}  
+//method to delete employee  
+public void deleteEmployee(Employee e){  
+    template.delete(e);  
+}  
+//method to return one employee of given id  
+public Employee getById(int id){  
+    Employee e=(Employee)template.get(Employee.class,id);  
+    return e;  
+}  
+//method to return all employees  
+public List<Employee> getEmployees(){  
+    List<Employee> list=new ArrayList<Employee>();  
+    list=template.loadAll(Employee.class);  
+    return list;  
+}  
+}  
+
+applicationContext.xml
+------------------------
+
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans  xmlns="http://www.springframework.org/schema/beans"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:p="http://www.springframework.org/schema/p"  xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">   
+    
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">  
+        <property name="driverClassName"  value="oracle.jdbc.driver.OracleDriver"></property>  
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"></property>  
+        <property name="username" value="system"></property>  
+        <property name="password" value="oracle"></property>  
+    </bean>  
+      
+    <bean id="mysessionFactory"  class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
+        <property name="dataSource" ref="dataSource"></property>  
+          
+        <property name="mappingResources">  
+			<list>  
+				<value>employee.hbm.xml</value>  
+			</list>  
+        </property>  
+          
+        <property name="hibernateProperties">  
+            <props>  
+                <prop key="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</prop>  
+                <prop key="hibernate.hbm2ddl.auto">update</prop>  
+                <prop key="hibernate.show_sql">true</prop>  
+                  
+            </props>  
+        </property>  
+    </bean>  
+      
+    <bean id="template" class="org.springframework.orm.hibernate3.HibernateTemplate">  
+    <property name="sessionFactory" ref="mysessionFactory"></property>  
+    </bean>  
+      
+    <bean id="d" class="com.javatpoint.EmployeeDao">  
+    <property name="template" ref="template"></property>  
+    </bean>  
+      
+      
+</beans>  
+
+
+
