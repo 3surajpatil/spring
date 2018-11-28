@@ -1,0 +1,75 @@
+Bean Scopes
+--------------
+
+BeanFactory or ApplicationContext class creates object of all the beans while initializing the application itself and not at the time when we get the bean from context or beanfactory by calling getBean("---") methods.
+
+this is the default behaviour of our spring application. and we can change this behaviour.
+
+there are 2 types of bean scopes.
+1) singleton :- this is default behaviour for all beans.only 1 object will be initialized. and same reference will be provided when getBean(-) is called.
+	e.g. <bean id="--" class="org.pkg.ClassName" scope="singleton"
+2) prototype :- every time new object will be created whenever getBean(-) is called.
+
+
+
+Web aware bean scopes
+1) request :- obj. will be created for every new request.
+2) session :- obj. will be created for every new session.
+3) Global :-  this is for global http sessions.
+
+
+ApplicationContextAware(I) & BeanNameAware(I)
+----------------------------------------
+
+ApplicationContextAware :- in order to get the context object in our application anywhere insted of starting point or any other class than executor class
+then our that class can implement the ApplicationContextAware interface.
+it will ask to implement the setter method. setApplicationContext(ApplicationContext ac){...} and like that way we can get the context object.
+
+simmilerly we can also get the bean name of the calss that is configured in the spring.xml file. to get that name we need to implement BeanNameAware(I)
+it has method setBeanName(String name){...}.
+
+
+
+
+bean inheritance
+------------------
+we can get the properties from other class by specifying that class as a parent.
+
+
+e.g. <bean id="--" class="---" parent="otherbean_id">
+
+here new bean will be created with provided properties and all properties from parent object will be copied to new bean/ object.
+
+in case if we have collection objects in the parent and child classes we have merge="true" option. which will merge collection from parent & child.
+e.g. <list merge="true">
+
+if we want to use parent class as an abstract then we can specify abstract="true" in the parent bean definition.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
