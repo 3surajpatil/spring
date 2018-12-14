@@ -1,0 +1,6 @@
+in\tcampus\controller\UserResource.class
+in\tcampus\controller\HelloWorldController.class
+in\tcampus\FirstApplication.class
+model\WelcomeMessageBean.class
+model\User.class
+service\UserDaoService.class
