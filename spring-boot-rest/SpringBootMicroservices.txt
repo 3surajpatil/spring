@@ -1,0 +1,137 @@
+Spring-Boot Microservices
+=========================
+
+WEB, DEVTOOLS, H2, JPA
+
+
+Representational State Transfer 
+
+
+
+mapping a get request
+--------------------------
+
+	@GetMapping(path="/users/{id}")
+	private User getUser(@PathVariable int id){		
+		return userDaoService.findOne(id);
+	}
+	
+	
+mapping a post request 
+------------------------
+--> in this sample user will be created . and URI location will be sent as part of response header.
+--> note the use of ServletUriComponentsBuilder to create a URI 
+--> also note that response status would be 201 for CREATED status which is standard practice.
+
+@PostMapping(path="/users")
+	private ResponseEntity<Object> createUser(@RequestBody User user){
+		
+		User savedUser=userDaoService.addUser(user);
+		
+		URI location=ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedUser.getId()).toUri(); 
+		
+		return ResponseEntity.created(location).build();
+	}	
+		
+---> ServletUriComponentsBuilder(C) :- this class have static factory methods to create links based on the current HttpServletRequest.
+
+
+
+Handeling an Exception 404 -NotFound.
+=========================================
+--> in case you try to get a resource in your webservice, lets try below url
+
+localhost:9090/users/6
+
+--> insted of showing a resource not found it will return us with a 200 status. so to avoid this we can throw an exception 
+ with a response status.
+--> if we are not annotating this class with @ResponseStatus(-) then it will give us response status as 500--> internal server error.
+--> NotFound is 404 response status.
+
+UserNotFoundException.java
+-----------------------------
+@ResponseStatus(HttpStatus.NOT_FOUND)  
+public class UserNotFoundException extends RuntimeException {	
+	public UserNotFoundException(String message) {
+		super(message);
+		// TODO Auto-generated constructor stub
+	}
+}
+ 
+in Resource class.
+--------------------
+
+@GetMapping(path="/users/{id}")
+	private User getUser(@PathVariable int id){		
+		User retrivedUser = userDaoService.findOne(id);		
+		if(retrivedUser==null){
+			throw new UserNotFoundException("user not found with id :-"+id);
+		}		
+		return retrivedUser;
+	}
+
+
+Implementing Generic Exception for all resources.
+==================================================
+
+
+---> when we throw exception like above which is in default exception handler format it looks like below with fields timestamp, status, error, message. 
+
+sample output of above application.
+"timestamp": "2018-12-14T12:10:10.903+0000",
+    "status": 404,
+    "error": "Not Found",
+    "message": "user not found with id :-600",
+    "trace": "in.tcampus.exceptions.UserNotFoundException: user not found with id :-600\r\n\tat in.tcampus.controller.UserResource.getUser(UserResource.java:37)
+	\r\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\r\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+
+---> we can customize these fields in the exception we are throwing. 
+
+for that create one class which shows structure of the exception fields. which will be sent in the response when exception occurs.
+
+public class ExceptionStructure {
+
+	private Date date;
+	private String message;
+	private String details;
+	
+	//controller.
+	public ExceptionStructure(Date date, String message, String details) {
+		super();
+		this.date = date; this.message = message; this.details = details;
+	}
+	//getters and setters...
+}
+
+---> next step would be creating a custom exception handler
+
+CustomExceptionHandeler.java
+-----------------------------
+
+@ControllerAdvice
+@RestController
+public class CustomExceptionHandeler extends ResponseEntityExceptionHandler{
+	
+	
+	// handles all the exceptions.
+	@ExceptionHandler(Exception.class) //note here we are providing the class we want to catch exception of type
+	public final ResponseEntity<Object> HandleAllExceptions(Exception ex, WebRequest request){		
+		ExceptionStructure genericException =new ExceptionStructure(new Date(),ex.getMessage(),request.getDescription(false));		
+		return new ResponseEntity(genericException,HttpStatus.INTERNAL_SERVER_ERROR) ;		
+	}
+	
+	//handles only UserNotFoundException
+	@ExceptionHandler(UserNotFoundException.class)
+	public final ResponseEntity<Object> HandleUserNotFoundException(UserNotFoundException ex, WebRequest request){		
+			ExceptionStructure genericException =new ExceptionStructure(new Date(),ex.getMessage(),request.getDescription(false));		
+			return new ResponseEntity(genericException,HttpStatus.NOT_FOUND) ;				
+	}
+}
+
+	
+	
+	
+	
+	
+	
+	
